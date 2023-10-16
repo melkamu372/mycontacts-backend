@@ -1,21 +1,17 @@
 const asyncHandler = require("express-async-handler");
 const Contact = require("../models/contactModels");
-
+const crudOperations = require("../middleware/crudOperations");
 // get all contacts 
-const getContact = asyncHandler(async (req, res) => {
-  const contact = await Contact.find({user_id:req.user.id});
-  res.status(200).json(contact);
-});
+const getAllContact = crudOperations.getAll(Contact);
 
-// get contact buy id 
-const getContacts = asyncHandler(async (req, res) => {
-  const contact = await Contact.findById(req.params.id);
-  if (!contact) {
-    res.status(404);
-    throw new Error("the data is not found ");
-  }
-  res.status(200).json(contact);
+//get all my contacts 
+const getMyContacts = asyncHandler(async (req, res) => {
+  const contacts = await Contact.find({user_id: req.user.id },req.query);
+  res.status(200).json(contacts);
 });
+ 
+// get contact buy id 
+const getContactsById=crudOperations.getById(Contact);
 
 // add new contact 
 const addContact = asyncHandler(async (req, res) => {
@@ -49,7 +45,6 @@ const updateContact = asyncHandler(async (req, res) => {
         req.body,
         {
             new:true
-
         }
       );
     res.status(200).json(updatedContact);
@@ -58,10 +53,12 @@ const updateContact = asyncHandler(async (req, res) => {
 const deleteContact = asyncHandler(async (req, res) => {
     try {
       const contact = await Contact.findById(req.params.id);
+      console.log(contact);
       if (!contact) {
         res.status(404);
         throw new Error("The data is not found");
       }
+    
       if(contact.user_id.toString()!=req.user.id){
         res.status(403);
         throw new Error("you have no permmision to update")
@@ -74,8 +71,9 @@ const deleteContact = asyncHandler(async (req, res) => {
   });
 
 module.exports = {
-  getContact,
-  getContacts,
+  getAllContact,
+  getMyContacts,
+  getContactsById,
   addContact,
   updateContact,
   deleteContact,

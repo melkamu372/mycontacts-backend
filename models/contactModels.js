@@ -12,7 +12,8 @@ const contantSchema=mongoose.Schema({
     ,
     email:{
         type:String,
-        required:[true,'please add contacts email']
+        required:[true,'please add contacts email'],
+        unique:[true, 'use unique email address']
     },
     phone:{
         type:String,
