@@ -41,8 +41,8 @@ if(user&&(await bcrypt.compare(password,user.password))){
   const accessToken=jwt.sign({
    user:{
    userName:user.userName,
-  email:user.email,
-  id:user.id
+   email:user.email,
+   id:user.id
 }
 }, 
   process.env.ACCESS_TOKEN_SECERET,
@@ -59,4 +59,8 @@ else{
 const currentUser = asyncHandler(async (req,res)=>{
     res.json(req.user)
 });
-  module.exports={currentUser,loginUser,registerUser}
+const allUser = asyncHandler(async (req,res)=>{
+  const documents = await User.find();
+  res.status(200).json(documents);
+});
+  module.exports={currentUser,loginUser,registerUser,allUser}
