@@ -9,6 +9,6 @@ addContact,
 updateContact,
 deleteContact,} = require('../Controller/contactController');
  router.route("/").get(getAllContact).post(addContact);
- router.route("/my-contact").get(getMyContacts);
+ router.route("/mycontact").get(getMyContacts);
  router.route("/:id").get(getContactsById).put(updateContact).delete(deleteContact);
 module.exports=router;

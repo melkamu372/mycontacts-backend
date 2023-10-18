@@ -1,13 +1,26 @@
 const asyncHandler = require("express-async-handler");
 const Contact = require("../models/contactModels");
 const crudOperations = require("../middleware/crudOperations");
+const ApiFeatures=require('../Utils/apiFeatures');
 // get all contacts 
-const getAllContact = crudOperations.getAll(Contact);
+// const getAllContact = crudOperations.getAll(Contact);
 
+const getAllContact = asyncHandler(async (req, res) => {
+  const features = new ApiFeatures(Contact.find({user_id: req.user.id }),req.query).filter().sort().limitFields().paginate();
+  let data = await features.query;
+  res.status(200).json({
+    status: "success",
+    length: data.length,
+    data: data
+  });
+});
 //get all my contacts 
 const getMyContacts = asyncHandler(async (req, res) => {
   const contacts = await Contact.find({user_id: req.user.id },req.query);
-  res.status(200).json(contacts);
+  res.status(200).json({
+    status:"Sucess",
+    length:contacts.length,
+    data:contacts});
 });
  
 // get contact buy id 
