@@ -1,27 +1,35 @@
-const mongoose=require('mongoose');
-const contantSchema=mongoose.Schema({
-    user_id:{
-        type:mongoose.Schema.Types.ObjectId,
-        required:true,
-        ref:"User"
+const mongoose = require('mongoose');
+
+const contactSchema = mongoose.Schema(
+  {
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
     },
-    name:{
-        type:String,
-        required:[true,'please add contacts name']
-    }
-    ,
-    email:{
-        type:String,
-        required:[true,'please add contacts email'],
-        unique:[true, 'use unique email address']
+    name: {
+      type: String,
+      required: [true, 'Please add the contact\'s name'],
     },
-    phone:{
-        type:String,
-        required:[true,'please add contacts phone']
-    }
-},
-{
-    timestamps:true
-}
+    email: {
+      type: String,
+      required: [true, 'Please add the contact\'s email'],
+      unique: [true, 'Please use a unique email address'],
+    },
+    phone: {
+      type: String,
+      required: [true, 'Please add the contact\'s phone'],
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
-module.exports=mongoose.model('Contact',contantSchema);
+
+contactSchema.virtual('fullAddress').get(function () {
+  return `${this.name}, ${this.email}, ${this.phone}`;
+});
+
+module.exports = mongoose.model('Contact', contactSchema);

@@ -19,7 +19,7 @@ const errorHandler = (err, re, res, next) => {
       res.json({title:"Internal Server Error", message: err.message,stackTrace:err.stack});
       break;
       default:
-       res.json({title:"Internal Server Error", message: err.message,stackTrace:err.stack})
+       res.json({title:"Server Error", message: err.message,stackTrace:err.stack})
   }
 };
 module.exports = errorHandler;
