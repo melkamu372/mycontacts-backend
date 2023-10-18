@@ -6,7 +6,7 @@ const ApiFeatures=require('../Utils/apiFeatures');
 // const getAllContact = crudOperations.getAll(Contact);
 
 const getAllContact = asyncHandler(async (req, res) => {
-  const features = new ApiFeatures(Contact.find({user_id: req.user.id }),req.query).filter().sort().limitFields().paginate();
+  const features = new ApiFeatures(Contact.find(),req.query).filter().sort().limitFields().paginate();
   let data = await features.query;
   res.status(200).json({
     status: "success",

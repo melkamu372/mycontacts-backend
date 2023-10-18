@@ -5,10 +5,15 @@ class ApiFeatures {
   }
 
   filter() {
-    let queryString=JSON.stringify(this.queryStr);
-    queryString=queryString.replace(/\b(gte|gt|lt|lte)\b/g,(match)=>`$${match}`);
-    const queryObj=JSON.parse(queryString);
-    this.query=this.query.find(queryObj);
+    const queryObj = { ...this.queryStr };
+    const excludedFields = ['page', 'limit', 'sort', 'fields'];
+    excludedFields.forEach((field) => delete queryObj[field]);
+    let queryString = JSON.stringify(queryObj);
+    queryString = queryString.replace(
+      /\b(gte|gt|lt|lte)\b/g,
+      (match) => `$${match}`
+    );
+    this.query = this.query.find(JSON.parse(queryString));
     return this;
   }
 
@@ -31,15 +36,14 @@ class ApiFeatures {
     }
     return this;
   }
-  
-    
-    paginate() {
-      const page = parseInt(this.queryStr.page)+1 || 1;
-      const limit = parseInt(this.queryStr.limit)+1 || 10;
-      const skip = (page - 1) * limit;
-      this.query = this.query.skip(skip).limit(limit);
-      return this;
-    }
-  
+
+  paginate() {
+    const page = parseInt(this.queryStr.page, 10) || 1;
+    const limit = parseInt(this.queryStr.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+    this.query = this.query.skip(skip).limit(limit);
+    return this;
+  }
 }
- module.exports=ApiFeatures;
+
+module.exports = ApiFeatures;
