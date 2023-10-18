@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const fs = require('fs');
 const contactSchema = mongoose.Schema(
   {
     user_id: {
@@ -20,6 +20,9 @@ const contactSchema = mongoose.Schema(
       type: String,
       required: [true, 'Please add the contact\'s phone'],
     },
+    createdBy: {
+        type: String,
+      },
   },
   {
     timestamps: true,
@@ -31,5 +34,16 @@ const contactSchema = mongoose.Schema(
 contactSchema.virtual('fullAddress').get(function () {
   return `${this.name}, ${this.email}, ${this.phone}`;
 });
+contactSchema.pre('save',function (next){
+this.createdBy="melkamu";
+next();
+})
+contactSchema.post('save',function(doc,next){
+    const content=`ane document is added ${doc.name} has been  created by ${doc.createdBy}\n`;
+    fs.writeFile('./log/log.txt', content, {flag:'a'}, (err) => {
+        console.log(err);
+    })
+    next();
+})
 
 module.exports = mongoose.model('Contact', contactSchema);
