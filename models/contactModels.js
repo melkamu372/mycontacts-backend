@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
+const validator=require('validator');
 const contactSchema = mongoose.Schema(
   {
     user_id: {
@@ -10,6 +11,9 @@ const contactSchema = mongoose.Schema(
     name: {
       type: String,
       required: [true, 'Please add the contact\'s name'],
+      maxlength:[40,"name should not greater than 40 characters"],
+      minlength:[2,"contact name should have minimum 2 letters"],
+      validate:[validator.isAlpha,"name should contain only alphabets "]
     },
     email: {
       type: String,
@@ -19,6 +23,7 @@ const contactSchema = mongoose.Schema(
     phone: {
       type: String,
       required: [true, 'Please add the contact\'s phone'],
+      
     },
     createdBy: {
         type: String,
@@ -38,6 +43,8 @@ contactSchema.pre('save',function (next){
 this.createdBy="melkamu";
 next();
 })
+
+// document middleware, query middleware, agreegate middleware
 contactSchema.post('save',function(doc,next){
     const content=`ane document is added ${doc.name} has been  created by ${doc.createdBy}\n`;
     fs.writeFile('./log/log.txt', content, {flag:'a'}, (err) => {
@@ -45,5 +52,6 @@ contactSchema.post('save',function(doc,next){
     })
     next();
 })
+
 
 module.exports = mongoose.model('Contact', contactSchema);

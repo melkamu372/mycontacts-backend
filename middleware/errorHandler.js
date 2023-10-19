@@ -1,5 +1,5 @@
 const {constants}=require('../Controller/constants');
-const errorHandler = (err, re, res, next) => {
+const errorHandler = (err, req, res, next) => {
   const statusCode = res.statusCode ? res.statusCode : 500;
   switch (statusCode) {
     case constants.VALIDATION_ERR:
@@ -22,4 +22,24 @@ const errorHandler = (err, re, res, next) => {
        res.json({title:"Server Error", message: err.message,stackTrace:err.stack})
   }
 };
+
+
+class CustomError extends Error{
+  constructor(message,statusCode){
+    super(message);
+    this.statusCode=statusCode;
+    this.status=statusCode>=400&& statusCode<500? 'fail': 'error';
+    this.isOPerational=true;
+    Error.captureStackTrace(this, this.constuctor);
+
+  }
+}
+const gloabl=(error,req,res,next)=>{
+  error.statusCode = error.statusCode|| 500;
+  error.status = error.status || 'error';
+  res.status(error.statusCode).json({
+    status:error.statusCode,
+    message:error.message
+  });
+}
 module.exports = errorHandler;
